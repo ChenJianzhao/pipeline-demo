@@ -2,27 +2,29 @@
 pipeline {
     agent any
     stages {
-        stage('Non-Parallel Stage') {
+        stage('Non-Sequential Stage') {
+            agent {
+                label 'for-non-sequential'
+            }
             steps {
-                echo 'This stage will be executed first.'
+                echo "On Non-Sequential Stage"
             }
         }
-        stage('Parallel Stage') {
-            when {
-                branch 'master'
+        stage('Sequential') {
+            environment {
+                FOR_SEQUENTIAL = "some-value"
             }
-            failFast true
             stages {
-                stage('Nested 1') {
-                    steps {
-                        echo "In stage Nested 1 within Branch C"
-                    }
-                }
-                stage('Nested 2') {
-                    steps {
-                        echo "In stage Nested 2 within Branch C"
-                    }
-                }
+               stage('In Sequential 1') {
+                   steps {
+                       echo "In Sequential 1"
+                   }
+               }
+               stage('In Sequential 2') {
+                   steps {
+                       echo "In Sequential 2"
+                   }
+               }
             }
         }
     }
